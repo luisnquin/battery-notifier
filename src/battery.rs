@@ -116,7 +116,7 @@ struct DebugState {
 #[derive(Clone, Deserialize)]
 pub struct DebugSettings {
     states: Vec<DebugState>,
-    seconds_between: i64,
+    check_interval: i64,
 }
 
 impl DebugSettings {
@@ -149,7 +149,7 @@ impl Debug {
 
     fn should_move_to_next_state(&self, now: chrono::NaiveTime) -> bool {
         let diff = now - self.last_update_at;
-        diff.num_seconds() >= self.settings.seconds_between
+        diff.num_seconds() >= self.settings.check_interval
     }
 
     fn next_state(&mut self) {
