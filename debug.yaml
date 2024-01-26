@@ -1,0 +1,16 @@
+# STATUS (case-sensitive): Charging | Full | Discharging
+# CAPACITY: integers from 0 to 100.
+#
+# See https://docs.kernel.org/power/power_supply_class.html for more.
+states:
+  - status: Discharging
+    capacity: 75
+  - status: Discharging
+    capacity: 10
+  - status: Charging
+    capacity: 85
+  - status: Full
+    capacity: 100
+
+# Expressed in seconds, this is the gap between both battery states.
+seconds_between: 1
