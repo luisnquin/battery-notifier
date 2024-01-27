@@ -47,7 +47,7 @@ impl PowerSupplyClass {
                 debug.next_state();
             };
 
-            return debug.get_state().capacity;
+            return debug.get_current_state().capacity;
         }
 
         let raw_capacity: String = fs::read_to_string(self.get_capacity_path())
@@ -69,7 +69,7 @@ impl PowerSupplyClass {
                 debug.next_state();
             };
 
-            return debug.get_state().status;
+            return debug.get_current_state().status;
         }
 
         fs::read_to_string(self.get_status_path())
@@ -143,7 +143,7 @@ impl Debug {
         }
     }
 
-    fn get_state(&self) -> DebugState {
+    fn get_current_state(&self) -> DebugState {
         self.settings.states.index(self.current_state).clone()
     }
 
