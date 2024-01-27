@@ -34,6 +34,54 @@ content = "Battery capacity is extremely low at ${{capacity}}%.\nConnect your la
 
 Adjust the values to suit your preferences.
 
+## Installation via Home Manager
+
+If you use [Home Manager](https://github.com/nix-community/home-manager) to manage your user environment, integrating the battery notifier into your configuration is straightforward.
+
+```nix
+# flake.nix
+{
+  inputs = {
+    nixpkgs.url = "nixpkgs/nixos-unstable";
+    home-manager.url = "github:nix-community/home-manager";
+    battery-notifier.url = "github:luisnquin/battery-notifier";
+  };
+
+  outputs = inputs @ {
+    self,
+    home-manager,
+    battery-notifier,
+    nixpkgs,
+    ...
+  }: let
+    system = "x86_64-linux";
+    username = "xyz";
+
+    pkgs = import nixpkgs {inherit system;};
+  in {
+    homeConfigurations.${username} = home-manager.lib.homeManagerConfiguration {
+      inherit pkgs;
+
+      modules = [
+        battery-notifier.homeManagerModule.default
+        {
+          programs.battery-notifier = {
+            enable = true;
+            settings = {
+              interval_ms = 700;
+              reminder = {threshold = 30;};
+              threat = {threshold = 5;};
+              warn = {threshold = 15;};
+            };
+          };
+        }
+      ];
+    };
+  };
+}
+```
+
+
 ## Development
 
 To develop and contribute to the project, use standard Cargo commands such as **build**, **run**, and **add**.
