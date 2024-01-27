@@ -6,11 +6,15 @@ states:
   - status: Discharging
     capacity: 75
   - status: Discharging
+    capacity: 29
+  - status: Discharging
     capacity: 10
+  - status: Discharging
+    capacity: 4
   - status: Charging
     capacity: 85
   - status: Full
     capacity: 100
 
 # Expressed in seconds, this is the gap between both battery states.
-seconds_between: 1
+seconds_between: 5
