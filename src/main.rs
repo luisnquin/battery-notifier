@@ -29,7 +29,10 @@ fn main() {
     let args = Args::parse();
 
     let cp = get_config_file(args.config_file);
+    println!("Config file path: {}", cp);
+
     let config = Config::parse_or_default(cp);
+    println!("{:#?}", config);
 
     let start_time = Utc::now().time();
 

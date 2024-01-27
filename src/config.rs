@@ -1,7 +1,7 @@
 use serde::Deserialize;
 use std::{env, error, fs, path::Path};
 
-#[derive(Clone, Deserialize)]
+#[derive(Debug, Clone, Deserialize)]
 pub struct Bound {
     pub threshold: u8,
     pub title: String,
@@ -20,7 +20,7 @@ impl Bound {
     }
 }
 
-#[derive(Clone, Deserialize)]
+#[derive(Debug, Clone, Deserialize)]
 pub struct Config {
     pub reminder: Bound,
     pub threat: Bound,
@@ -67,43 +67,43 @@ impl Config {
     }
 
     fn merge(mut self, other: Config) -> Config {
-        if other.reminder.threshold != 0 {
+        if self.reminder.threshold != 0 {
             self.reminder.threshold = other.reminder.threshold
         }
 
-        if other.reminder.title == "" {
+        if self.reminder.title == "" {
             self.reminder.title = other.reminder.title
         }
 
-        if other.reminder.content == "" {
+        if self.reminder.content == "" {
             self.reminder.content = other.reminder.content
         }
 
-        if other.threat.threshold != 0 {
+        if self.threat.threshold != 0 {
             self.threat.threshold = other.threat.threshold
         }
 
-        if other.threat.title == "" {
+        if self.threat.title == "" {
             self.threat.title = other.threat.title
         }
 
-        if other.threat.content == "" {
+        if self.threat.content == "" {
             self.threat.content = other.threat.content
         }
 
-        if other.warn.threshold != 0 {
+        if self.warn.threshold != 0 {
             self.warn.threshold = other.warn.threshold
         }
 
-        if other.warn.title == "" {
+        if self.warn.title == "" {
             self.warn.title = other.warn.title
         }
 
-        if other.warn.content == "" {
+        if self.warn.content == "" {
             self.warn.content = other.warn.content
         }
 
-        if other.interval_ms != 0 {
+        if self.interval_ms != 0 {
             self.interval_ms = other.interval_ms
         }
 
