@@ -14,10 +14,22 @@ Configuration files should be located in the `$XDG_CONFIG_FILE`. If undefined, t
 ```toml
 # battery-notifier/config.toml
 
-reminder_threshold = 30
-threat_threshold = 15
-warn_threshold = 5
 interval_ms = 700 # 7s
+
+[reminder]
+threshold = 30
+title = "Battery somewhat low"
+content = "Battery capacity is at ${{capacity}}%.\nConsider plugging in your laptop to avoid running out of power."
+
+[warn]
+threshold = 15
+title = "Battery low"
+content = "Battery capacity is critically low at ${{capacity}}%.\nPlease plug in your laptop."
+
+[threat]
+threshold = 5
+title = "Battery in critical state"
+content = "Battery capacity is extremely low at ${{capacity}}%.\nConnect your laptop to a power source urgently to prevent data loss and unexpected shutdown."
 ```
 
 Adjust the values to suit your preferences.
