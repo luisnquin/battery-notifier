@@ -1,5 +1,6 @@
+use notify_rust::{error, Hint, Notification, NotificationHandle};
 use soloud::{audio::Wav, AudioExt, LoadExt, Soloud};
-use std::{env, fmt, fs, io, io::ErrorKind, path::Path, process, thread, time};
+use std::{env, fmt, path::Path, thread, time};
 
 pub const BATTERY_DANGER_PATH: &str = "./assets/battery-danger.png";
 
@@ -23,6 +24,14 @@ impl Urgency {
             Urgency::LOW => REMINDER_BATTERY_SOUND,
         }
     }
+
+    fn get_for_third_party(&self) -> notify_rust::Urgency {
+        match self {
+            Urgency::CRITICAL => notify_rust::Urgency::Critical,
+            Urgency::NORMAL => notify_rust::Urgency::Normal,
+            Urgency::LOW => notify_rust::Urgency::Low,
+        }
+    }
 }
 
 impl fmt::Display for Urgency {
@@ -39,7 +48,7 @@ pub fn send_desktop_notification(
     urgency: Urgency,
     title: &str,
     content: &str,
-) -> io::Result<process::Output> {
+) -> error::Result<NotificationHandle> {
     let icon_path = if Path::new(BATTERY_DANGER_PATH).is_relative() {
         let cwd = env::current_dir().expect("get current directory");
 
@@ -52,18 +61,15 @@ pub fn send_desktop_notification(
         BATTERY_DANGER_PATH.to_owned()
     };
 
-    if is_program_in_path("notify-send") {
-        return process::Command::new("notify-send")
-            .arg(format!("--urgency={}", urgency.to_string()))
-            .arg(format!("--hint={}", "string:x-dunst-stack-tag:battery"))
-            .arg(format!("--icon={}", icon_path))
-            .arg(title)
-            .arg(content)
-            .output();
-    } else {
-        let err = io::Error::new(ErrorKind::NotFound, "notify-send were not found in $PATH");
-        return Result::Err(err);
-    }
+    let result = Notification::new()
+        .summary(title)
+        .body(content)
+        .icon(&icon_path)
+        .hint(Hint::Category("string:x-stack-tag:battery".to_string()))
+        .hint(Hint::Urgency(urgency.get_for_third_party()))
+        .show();
+
+    result.map(|r| return r)
 }
 
 pub fn send_sound_notification(sound: &[u8]) {
@@ -90,18 +96,4 @@ pub fn send_sound_notification(sound: &[u8]) {
             error.to_string()
         ),
     }
-}
-
-fn is_program_in_path(program_name: &str) -> bool {
-    if let Ok(path) = env::var("PATH") {
-        for p in path.split(":") {
-            let p_str = format!("{}/{}", p, program_name);
-
-            if fs::metadata(p_str).is_ok() {
-                return true;
-            }
-        }
-    }
-
-    false
 }

@@ -1,5 +1,6 @@
 use chrono::Utc;
 use clap::Parser;
+use notify_rust::NotificationHandle;
 use std::{
     thread,
     time::{self},
@@ -34,12 +35,6 @@ fn main() {
     let config = Config::parse_or_default(cp);
     println!("{:#?}", config);
 
-    let start_time = Utc::now().time();
-
-    let sleep_time = time::Duration::from_millis(config.interval_ms); // 0.7s
-    let mut last_notification_level = BatteryNotificationLevel::NoConflict;
-    let mut psc = PowerSupplyClass::new(args.debug_file);
-
     // Calculates the notification level based on the provided battery capacity.
     let get_notification_level = |capacity: u8| -> BatteryNotificationLevel {
         match capacity {
@@ -53,6 +48,13 @@ fn main() {
             _ => BatteryNotificationLevel::NoConflict,
         }
     };
+
+    let start_time = Utc::now().time();
+    let sleep_time = time::Duration::from_millis(config.interval_ms); // 0.7s
+
+    let mut last_notification_level = BatteryNotificationLevel::NoConflict;
+    let mut last_notification_handler: Option<NotificationHandle> = None;
+    let mut psc = PowerSupplyClass::new(args.debug_file);
 
     loop {
         let capacity = psc.get_capacity();
@@ -70,6 +72,7 @@ fn main() {
             let current_time = Utc::now().time();
 
             if (current_time - start_time).num_seconds() > 5 {
+                last_notification_handler.take().map(|h| h.close());
                 send_sound_notification(CHARGING_BATTERY_SOUND);
             } else {
                 println!("[WARNING] the app started with the computer plugged in, nothing to do");
@@ -93,20 +96,21 @@ fn main() {
                 );
 
                 if last_notification_level != current_notification_level {
-                    last_notification_level = current_notification_level;
+                    last_notification_handler.take().map(|h| h.close());
 
-                    match send_desktop_notification(
+                    let result = send_desktop_notification(
                         urgency,
                         bound.render_title(capacity).as_str(),
                         bound.render_content(capacity).as_str(),
-                    ) {
-                        Ok(r) => println!("[DEBUG] Battery notification: {:#?}", r),
-                        Err(error) => {
-                            println!("[ERROR] Battery notification: {}", error.to_string())
-                        }
-                    };
+                    );
 
-                    send_sound_notification(urgency.get_sound())
+                    if result.is_ok() {
+                        last_notification_handler = Some(result.unwrap());
+                    } else {
+                        println!("[ERROR] Battery notification: {:#?}", result.unwrap())
+                    }
+
+                    send_sound_notification(urgency.get_sound());
                 };
 
                 println!(
