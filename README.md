@@ -93,7 +93,7 @@ For this you can create or modify a [debug file](./debug.yaml) and pass it via C
 
 ```sh
 # Start the program using the debug file as a mock.
-$ cargo run --debug-file=./debug.yaml
+$ cargo run -- --debug-file=./debug.yaml
 ```
 
 This command serves as a **manual test suite**, so after any changes, ensure to run the program using the original debug file.
