@@ -18,10 +18,12 @@ in {
 
         title = mkOption {
           type = types.str;
+          default = "";
         };
 
         content = mkOption {
           type = types.str;
+          default = "";
         };
       };
     };
@@ -35,17 +37,23 @@ in {
 
         reminder = mkOption {
           type = boundModule;
-          default = {};
+          default = {
+            threshold = 30;
+          };
         };
 
         warn = mkOption {
           type = boundModule;
-          default = {};
+          default = {
+            threshold = 15;
+          };
         };
 
         threat = mkOption {
           type = boundModule;
-          default = {};
+          default = {
+            threshold = 5;
+          };
         };
       };
     };
@@ -64,20 +72,24 @@ in {
     mkIf cfg.enable {
       assertions = mkIf (cfg.settings != null) [
         {
-          assertion = builtins.length (lib.attrsets.attrValues (lib.attrsets.filterAttrs (k: v: lib.strings.hasSuffix k "threshold" && v >= 0 && v <= 100) cfg.settings)) == 0;
+          assertion = let
+            greatEq0LowEq100 = v: v >= 0 && v <= 100;
+            inherit (cfg.settings) reminder warn threat;
+          in
+            greatEq0LowEq100 reminder.threshold && greatEq0LowEq100 warn.threshold && greatEq0LowEq100 threat.threshold;
           message = "threshold values must be greater equal than 0 and less equal than 100";
         }
         {
-          assertion = cfg.settings.reminder_threshold > cfg.settings.warn_threshold;
+          assertion = cfg.settings.interval_ms > 0;
+          message = "'interval_ms' must be greater than zero";
+        }
+        {
+          assertion = cfg.settings.reminder.threshold > cfg.settings.warn.threshold;
           message = "'reminder' threshold must be greater than 'warn' threshold";
         }
         {
-          assertion = cfg.settings.warn_threshold > cfg.settings.threat_threshold;
+          assertion = cfg.settings.warn.threshold > cfg.settings.threat.threshold;
           message = "'warn' threshold must be greater than 'threat' threshold";
-        }
-        {
-          assertion = cfg.settings.sleep_ms > 0;
-          message = "sleep time must be greater than zero";
         }
       ];
 
