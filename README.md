@@ -37,3 +37,8 @@ $ cargo run --debug-file=./debug.yaml
 ```
 
 Feel free to create a new pull request if you see something to improve.
+
+
+## License
+
+[MIT](./.github/LICENSE)
