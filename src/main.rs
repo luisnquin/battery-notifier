@@ -33,7 +33,7 @@ fn main() {
 
     let start_time = Utc::now().time();
 
-    let sleep_time = time::Duration::from_millis(config.sleep_ms); // 0.7s
+    let sleep_time = time::Duration::from_millis(config.interval_ms); // 0.7s
     let mut last_notification_level = BatteryNotificationLevel::NoConflict;
     let mut psc = PowerSupplyClass::new(args.debug_file);
 

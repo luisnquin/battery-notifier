@@ -6,13 +6,13 @@ pub struct Config {
     pub reminder_threshold: u8,
     pub threat_threshold: u8,
     pub warn_threshold: u8,
-    pub sleep_ms: u64,
+    pub interval_ms: u64,
 }
 
 impl Config {
     fn default() -> Self {
         Config {
-            sleep_ms: 700,
+            interval_ms: 700,
             reminder_threshold: 30,
             threat_threshold: 15,
             warn_threshold: 5,
@@ -43,8 +43,8 @@ impl Config {
             self.warn_threshold = other.warn_threshold
         }
 
-        if other.sleep_ms != 0 {
-            self.sleep_ms = other.sleep_ms
+        if other.interval_ms != 0 {
+            self.interval_ms = other.interval_ms
         }
 
         self
