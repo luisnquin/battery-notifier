@@ -96,6 +96,8 @@ For this you can create or modify a [debug file](./debug.yaml) and pass it via C
 $ cargo run --debug-file=./debug.yaml
 ```
 
+This command serves as a **manual test suite**, so after any changes, ensure to run the program using the original debug file.
+
 Feel free to create a new pull request if you see something to improve.
 
 
