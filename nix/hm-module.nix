@@ -10,6 +10,22 @@ with lib; let
   flake-pkgs = self.packages.${system};
 in {
   options.programs.battery-notifier = let
+    boundModule = types.submodule {
+      options = {
+        threshold = mkOption {
+          type = types.int;
+        };
+
+        title = mkOption {
+          type = types.str;
+        };
+
+        content = mkOption {
+          type = types.str;
+        };
+      };
+    };
+
     settingsModule = types.submodule {
       options = {
         interval_ms = mkOption {
@@ -17,19 +33,19 @@ in {
           default = 700;
         };
 
-        reminder_threshold = mkOption {
-          type = types.int;
-          default = 30;
+        reminder = mkOption {
+          type = boundModule;
+          default = {};
         };
 
-        warn_threshold = mkOption {
-          type = types.int;
-          default = 15;
+        warn = mkOption {
+          type = boundModule;
+          default = {};
         };
 
-        threat_threshold = mkOption {
-          type = types.int;
-          default = 5;
+        threat = mkOption {
+          type = boundModule;
+          default = {};
         };
       };
     };
