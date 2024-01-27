@@ -7,6 +7,8 @@ states:
     capacity: 75
   - status: Discharging
     capacity: 29
+  - status: Charging
+    capacity: 29
   - status: Discharging
     capacity: 10
   - status: Discharging
