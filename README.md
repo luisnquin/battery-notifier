@@ -24,7 +24,7 @@ Adjust the values to suit your preferences.
 
 ## Development
 
-To develop and contribute to the project, use standard Cargo commands such as `build`, `run`, and `add`.
+To develop and contribute to the project, use standard Cargo commands such as **build**, **run**, and **add**.
 
 ### Debugging
 
