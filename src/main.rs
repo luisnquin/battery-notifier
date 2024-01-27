@@ -50,7 +50,7 @@ fn main() {
     };
 
     let start_time = Utc::now().time();
-    let sleep_time = time::Duration::from_millis(config.interval_ms); // 0.7s
+    let sleep_time = time::Duration::from_millis(config.interval_ms);
 
     let mut last_notification_level = BatteryNotificationLevel::NoConflict;
     let mut last_notification_handler: Option<NotificationHandle> = None;
