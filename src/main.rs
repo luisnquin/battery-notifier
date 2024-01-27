@@ -40,9 +40,13 @@ fn main() {
     // Calculates the notification level based on the provided battery capacity.
     let get_notification_level = |capacity: u8| -> BatteryNotificationLevel {
         match capacity {
-            c if c <= config.reminder_threshold => BatteryNotificationLevel::Reminder,
-            c if c <= config.warn_threshold => BatteryNotificationLevel::Warn,
-            c if c <= config.threat_threshold => BatteryNotificationLevel::Threat,
+            c if c > config.warn.threshold && c <= config.reminder.threshold => {
+                BatteryNotificationLevel::Reminder
+            }
+            c if c > config.threat.threshold && c <= config.warn.threshold => {
+                BatteryNotificationLevel::Warn
+            }
+            c if c <= config.threat.threshold => BatteryNotificationLevel::Threat,
             _ => BatteryNotificationLevel::NoConflict,
         }
     };
@@ -70,10 +74,15 @@ fn main() {
 
             last_notification_level = BatteryNotificationLevel::Charging
         } else if status == "Discharging" || status == "Not charging" {
-            let default_content = format!("Charge: {}%", capacity);
+            let current_notification_level = get_notification_level(capacity);
 
-            let mut notify_capacity = |urgency: Urgency, title: &str, content: &str| {
-                let current_notification_level = get_notification_level(capacity);
+            if current_notification_level != BatteryNotificationLevel::NoConflict {
+                let (urgency, bound) = match current_notification_level {
+                    BatteryNotificationLevel::Reminder => (Urgency::LOW, &config.reminder),
+                    BatteryNotificationLevel::Warn => (Urgency::NORMAL, &config.warn),
+                    BatteryNotificationLevel::Threat => (Urgency::CRITICAL, &config.threat),
+                    _ => panic!("unexpected battery notification level"),
+                };
 
                 println!(
                     "[DEBUG] Last notification level: {}, Current notification level: {}",
@@ -83,7 +92,11 @@ fn main() {
                 if last_notification_level != current_notification_level {
                     last_notification_level = current_notification_level;
 
-                    match send_desktop_notification(urgency, title, content) {
+                    match send_desktop_notification(
+                        urgency,
+                        bound.render_title(capacity).as_str(),
+                        bound.render_content(capacity).as_str(),
+                    ) {
                         Ok(r) => println!("[DEBUG] Battery notification: {:#?}", r),
                         Err(error) => {
                             println!("[ERROR] Battery notification: {}", error.to_string())
@@ -91,28 +104,12 @@ fn main() {
                     };
 
                     send_sound_notification(urgency.get_sound())
-                }
-            };
+                };
 
-            match get_notification_level(capacity) {
-                BatteryNotificationLevel::Reminder => {
-                    notify_capacity(Urgency::LOW, "Battery somewhat low", &default_content)
-                }
-                BatteryNotificationLevel::Warn => notify_capacity(
-                    Urgency::NORMAL,
-                    "Battery low",
-                    format!("{}.\nPlease connect your laptop", default_content).as_str(),
-                ),
-                BatteryNotificationLevel::Threat => notify_capacity(
-                    Urgency::CRITICAL,
-                    "Battery very low",
-                    format!(
-                        "{}.\n\nYour computer will shut down soon! You'll regret this!",
-                        default_content
-                    )
-                    .as_str(),
-                ),
-                _ => (),
+                println!(
+                    "[DEBUG] Last notification level: {}, Current notification level: {}",
+                    last_notification_level, current_notification_level
+                );
             }
         }
 

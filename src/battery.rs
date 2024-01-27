@@ -86,7 +86,7 @@ impl PowerSupplyClass {
     }
 }
 
-#[derive(PartialEq)]
+#[derive(PartialEq, Clone, Copy)]
 pub enum BatteryNotificationLevel {
     NoConflict,
     Reminder,

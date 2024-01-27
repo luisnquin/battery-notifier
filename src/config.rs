@@ -2,20 +2,56 @@ use serde::Deserialize;
 use std::{env, error, fs, path::Path};
 
 #[derive(Clone, Deserialize)]
+pub struct Bound {
+    pub threshold: u8,
+    pub title: String,
+    pub content: String,
+}
+
+impl Bound {
+    pub fn render_title(&self, capacity: u8) -> String {
+        self.title
+            .replace("${{capacity}}", capacity.to_string().as_str())
+    }
+
+    pub fn render_content(&self, capacity: u8) -> String {
+        self.content
+            .replace("${{capacity}}", capacity.to_string().as_str())
+    }
+}
+
+#[derive(Clone, Deserialize)]
 pub struct Config {
-    pub reminder_threshold: u8,
-    pub threat_threshold: u8,
-    pub warn_threshold: u8,
+    pub reminder: Bound,
+    pub threat: Bound,
+    pub warn: Bound,
     pub interval_ms: u64,
 }
 
 impl Config {
     fn default() -> Self {
+        let default_body = "Charge: ${{capacity}}%";
+
         Config {
             interval_ms: 700,
-            reminder_threshold: 30,
-            threat_threshold: 15,
-            warn_threshold: 5,
+            reminder: Bound {
+                title: "Battery somewhat low".to_string(),
+                content: default_body.to_string(),
+                threshold: 30,
+            },
+            warn: Bound {
+                title: "Battery low".to_string(),
+                content: format!("{}.\nPlease connect your laptop", default_body),
+                threshold: 15,
+            },
+            threat: Bound {
+                title: "Battery very low".to_string(),
+                content: format!(
+                    "{}.\n\nYour computer will shut down soon! You'll regret this!",
+                    default_body
+                ),
+                threshold: 5,
+            },
         }
     }
 
@@ -31,16 +67,40 @@ impl Config {
     }
 
     fn merge(mut self, other: Config) -> Config {
-        if other.reminder_threshold != 0 {
-            self.reminder_threshold = other.reminder_threshold
+        if other.reminder.threshold != 0 {
+            self.reminder.threshold = other.reminder.threshold
         }
 
-        if other.threat_threshold != 0 {
-            self.threat_threshold = other.threat_threshold
+        if other.reminder.title == "" {
+            self.reminder.title = other.reminder.title
         }
 
-        if other.warn_threshold != 0 {
-            self.warn_threshold = other.warn_threshold
+        if other.reminder.content == "" {
+            self.reminder.content = other.reminder.content
+        }
+
+        if other.threat.threshold != 0 {
+            self.threat.threshold = other.threat.threshold
+        }
+
+        if other.threat.title == "" {
+            self.threat.title = other.threat.title
+        }
+
+        if other.threat.content == "" {
+            self.threat.content = other.threat.content
+        }
+
+        if other.warn.threshold != 0 {
+            self.warn.threshold = other.warn.threshold
+        }
+
+        if other.warn.title == "" {
+            self.warn.title = other.warn.title
+        }
+
+        if other.warn.content == "" {
+            self.warn.content = other.warn.content
         }
 
         if other.interval_ms != 0 {
