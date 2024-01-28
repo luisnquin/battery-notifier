@@ -14,3 +14,4 @@ serde_yaml = "0.9.30"
 soloud = { git = "https://github.com/MoAlyousef/soloud-rs" }
 toml = "0.8.8"
 notify-rust = "4.10.0"
+anstyle = "1.0.4"
