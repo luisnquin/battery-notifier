@@ -48,7 +48,7 @@ pub struct Config {
     pub interval_ms: u64,
 }
 
-impl Config {
+impl Default for Config {
     fn default() -> Self {
         let default_body = "Charge: ${{capacity}}%";
 
@@ -75,7 +75,9 @@ impl Config {
             },
         }
     }
+}
 
+impl Config {
     pub fn parse(config_path: String) -> Result<Self, Box<dyn std::error::Error>> {
         let content = fs::read_to_string(config_path)?;
         let config: Config = toml::from_str(&content)?;
