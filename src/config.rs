@@ -36,6 +36,8 @@ impl Bound {
 #[derive(Debug, Clone, Deserialize)]
 pub struct Config {
     #[serde(default)]
+    pub icon_path: Option<String>,
+    #[serde(default)]
     pub reminder: Bound,
     #[serde(default)]
     pub threat: Bound,
@@ -51,6 +53,7 @@ impl Config {
 
         Config {
             interval_ms: 700,
+            icon_path: None,
             reminder: Bound {
                 title: "Battery somewhat low".to_string(),
                 content: default_body.to_string(),

@@ -48,17 +48,22 @@ pub fn send_desktop_notification(
     urgency: Urgency,
     title: &str,
     content: &str,
+    icon_path: Option<String>,
 ) -> error::Result<NotificationHandle> {
-    let icon_path = if Path::new(BATTERY_DANGER_PATH).is_relative() {
-        let cwd = env::current_dir().expect("get current directory");
-
-        Path::new(cwd.to_str().unwrap())
-            .join(BATTERY_DANGER_PATH)
-            .to_owned()
-            .to_string_lossy()
-            .to_string()
+    let icon_path = if icon_path.is_some() {
+        icon_path.unwrap()
     } else {
-        BATTERY_DANGER_PATH.to_owned()
+        if Path::new(BATTERY_DANGER_PATH).is_relative() {
+            let cwd = env::current_dir().expect("get current directory");
+
+            Path::new(cwd.to_str().unwrap())
+                .join(BATTERY_DANGER_PATH)
+                .to_owned()
+                .to_string_lossy()
+                .to_string()
+        } else {
+            BATTERY_DANGER_PATH.to_owned()
+        }
     };
 
     let result = Notification::new()

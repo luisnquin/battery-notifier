@@ -102,6 +102,7 @@ fn main() {
                         urgency,
                         bound.render_title(capacity).as_str(),
                         bound.render_content(capacity).as_str(),
+                        config.icon_path.to_owned(),
                     );
 
                     if result.is_ok() {
