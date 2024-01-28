@@ -9,6 +9,13 @@ license = "MIT"
 
 authors = ["Luis Quiñones <lpaandres2020@gmail.com>"]
 
+
+[[bin]]
+name = "battery-notifier"
+test = false
+bench = false
+
+
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
