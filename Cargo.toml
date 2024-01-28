@@ -1,9 +1,16 @@
 [package]
 name = "battery-notifier"
+description = "A customizable battery notifier for Linux kernels focused in BAT0 and BAT1"
 version = "0.1.0"
 edition = "2021"
+repository = "https://github.com/luisnquin/battery-notifier"
+readme = "README.md"
+license = "MIT"
+
+authors = ["Luis Quiñones <lpaandres2020@gmail.com>"]
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
 [dependencies]
 serde = { version = "1.0.195", features = ["derive"] }
 chrono = "0.4.31"
