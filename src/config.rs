@@ -80,7 +80,13 @@ impl Config {
     }
 
     pub fn parse_or_default(config_path: String) -> Self {
-        Config::parse(config_path).unwrap_or_else(|_| Config::default())
+        match Config::parse(config_path) {
+            Ok(config) => config,
+            Err(error) => {
+                eprintln!("[ERROR] error parsing config: {}", error);
+                Config::default() // Provide a default value or handle it as needed
+            }
+        }
     }
 
     fn merge(mut self, other: Config) -> Config {
