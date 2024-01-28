@@ -50,26 +50,10 @@ pub fn send_desktop_notification(
     content: &str,
     icon_path: Option<String>,
 ) -> error::Result<NotificationHandle> {
-    let icon_path = if icon_path.is_some() {
-        icon_path.unwrap()
-    } else {
-        if Path::new(BATTERY_DANGER_PATH).is_relative() {
-            let cwd = env::current_dir().expect("get current directory");
-
-            Path::new(cwd.to_str().unwrap())
-                .join(BATTERY_DANGER_PATH)
-                .to_owned()
-                .to_string_lossy()
-                .to_string()
-        } else {
-            BATTERY_DANGER_PATH.to_owned()
-        }
-    };
-
     let result = Notification::new()
         .summary(title)
         .body(content)
-        .icon(&icon_path)
+        .icon(&get_icon_path_or_default(icon_path))
         .hint(Hint::Category("string:x-stack-tag:battery".to_string()))
         .hint(Hint::Urgency(urgency.get_for_third_party()))
         .show();
@@ -100,5 +84,26 @@ pub fn send_sound_notification(sound: &[u8]) {
             "[ERROR] soloud instance couldn't be correctly initialized: {}",
             error.to_string()
         ),
+    }
+}
+
+pub fn get_icon_path_or_default(icon_path: Option<String>) -> String {
+    if icon_path.is_some() {
+        let p = icon_path.unwrap();
+        if p != "" {
+            return p;
+        }
+    };
+
+    if Path::new(BATTERY_DANGER_PATH).is_relative() {
+        let cwd = env::current_dir().expect("get current directory");
+
+        Path::new(cwd.to_str().unwrap())
+            .join(BATTERY_DANGER_PATH)
+            .to_owned()
+            .to_string_lossy()
+            .to_string()
+    } else {
+        BATTERY_DANGER_PATH.to_owned()
     }
 }
