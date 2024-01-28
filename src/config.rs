@@ -3,9 +3,22 @@ use std::{env, error, fs, path::Path};
 
 #[derive(Debug, Clone, Deserialize)]
 pub struct Bound {
+    #[serde(default)]
     pub threshold: u8,
+    #[serde(default)]
     pub title: String,
+    #[serde(default)]
     pub content: String,
+}
+
+impl Default for Bound {
+    fn default() -> Self {
+        Self {
+            threshold: 0,
+            title: String::new(),
+            content: String::new(),
+        }
+    }
 }
 
 impl Bound {
@@ -22,9 +35,13 @@ impl Bound {
 
 #[derive(Debug, Clone, Deserialize)]
 pub struct Config {
+    #[serde(default)]
     pub reminder: Bound,
+    #[serde(default)]
     pub threat: Bound,
+    #[serde(default)]
     pub warn: Bound,
+    #[serde(default)]
     pub interval_ms: u64,
 }
 
