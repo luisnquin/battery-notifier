@@ -95,7 +95,17 @@ impl Config {
     }
 
     fn merge(mut self, other: Config) -> Config {
+        let warn_if_not_zero = |threshold: u8, label: &str| {
+            if threshold != 0 {
+                warn!(
+                    "invalid {} threshold '{}', default will be used",
+                    label, threshold
+                )
+            }
+        };
+
         if self.reminder.threshold <= 0 || self.reminder.threshold > 100 {
+            warn_if_not_zero(self.reminder.threshold, "reminder");
             self.reminder.threshold = other.reminder.threshold
         }
 
@@ -108,6 +118,7 @@ impl Config {
         }
 
         if self.threat.threshold <= 0 || self.threat.threshold > 100 {
+            warn_if_not_zero(self.threat.threshold, "threat");
             self.threat.threshold = other.threat.threshold
         }
 
@@ -120,6 +131,7 @@ impl Config {
         }
 
         if self.warn.threshold <= 0 || self.warn.threshold > 100 {
+            warn_if_not_zero(self.warn.threshold, "warn");
             self.warn.threshold = other.warn.threshold
         }
 
