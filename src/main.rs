@@ -6,6 +6,8 @@ use std::{
     time::{self},
 };
 
+mod cli;
+
 mod config;
 use config::*;
 
@@ -15,19 +17,8 @@ use notify::*;
 mod battery;
 use battery::*;
 
-#[derive(Parser, Debug)]
-#[command(author, version, about, long_about = None)]
-struct Args {
-    #[arg(short, long)]
-    /// To simulate battery states (yaml).
-    debug_file: Option<String>,
-    /// The config file path (toml).
-    #[arg(short, long)]
-    config_file: Option<String>,
-}
-
 fn main() {
-    let args = Args::parse();
+    let args = cli::Args::parse();
 
     let cp = get_config_file(args.config_file);
     println!("Config file path: {}", cp);
