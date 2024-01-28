@@ -37,7 +37,18 @@ content = "Battery capacity is extremely low at ${{capacity}}%.\nConnect your la
 
 Adjust the values to suit your preferences.
 
-## Installation via Home Manager
+## Installation
+
+### Ubuntu
+
+```sh
+# Install necessary build dependencies.
+$ apt-get install cmake git -y
+# Install the program binary. Default location is $HOME/.cargo/bin.
+$ cargo install --path .
+```
+
+### Home Manager
 
 If you use [Home Manager](https://github.com/nix-community/home-manager) to manage your user environment, integrating the battery notifier into your configuration is straightforward.
 
