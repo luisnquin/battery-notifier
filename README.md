@@ -113,8 +113,12 @@ $ cargo run -- --debug-file=./debug.yaml
 
 This command serves as a **manual test suite**, so after any changes, ensure to run the program using the original debug file.
 
-Feel free to create a new pull request if you see something to improve.
 
+## Contributing
+
+Feel free to create a new issue or pull request if you see something to improve.
+
+Anyway, this project uses [conventional commits](https://www.conventionalcommits.org/en/v1.0.0/), so please align with that.
 
 ## License
 
