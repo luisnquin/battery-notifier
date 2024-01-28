@@ -90,7 +90,7 @@ impl Config {
     }
 
     fn merge(mut self, other: Config) -> Config {
-        if self.reminder.threshold != 0 {
+        if self.reminder.threshold <= 0 || self.reminder.threshold > 100 {
             self.reminder.threshold = other.reminder.threshold
         }
 
@@ -102,7 +102,7 @@ impl Config {
             self.reminder.content = other.reminder.content
         }
 
-        if self.threat.threshold != 0 {
+        if self.threat.threshold <= 0 || self.threat.threshold > 100 {
             self.threat.threshold = other.threat.threshold
         }
 
@@ -114,7 +114,7 @@ impl Config {
             self.threat.content = other.threat.content
         }
 
-        if self.warn.threshold != 0 {
+        if self.warn.threshold <= 0 || self.warn.threshold > 100 {
             self.warn.threshold = other.warn.threshold
         }
 
@@ -126,7 +126,7 @@ impl Config {
             self.warn.content = other.warn.content
         }
 
-        if self.interval_ms != 0 {
+        if self.interval_ms <= 0 {
             self.interval_ms = other.interval_ms
         }
 
