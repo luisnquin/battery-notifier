@@ -1,5 +1,6 @@
+use log::{error, info, warn};
 use serde::Deserialize;
-use std::{env, error, fs, path::Path};
+use std::{env, fs, path::Path};
 
 #[derive(Debug, Clone, Deserialize)]
 pub struct Bound {
@@ -75,7 +76,7 @@ impl Config {
         }
     }
 
-    pub fn parse(config_path: String) -> Result<Self, Box<dyn error::Error>> {
+    pub fn parse(config_path: String) -> Result<Self, Box<dyn std::error::Error>> {
         let content = fs::read_to_string(config_path)?;
         let config: Config = toml::from_str(&content)?;
 
@@ -86,7 +87,8 @@ impl Config {
         match Config::parse(config_path) {
             Ok(config) => config,
             Err(error) => {
-                eprintln!("[ERROR] error parsing config: {}", error);
+                error!("unable to parse user config: {}", error);
+                info!("default config will be used");
                 Config::default() // Provide a default value or handle it as needed
             }
         }

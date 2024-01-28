@@ -22,3 +22,5 @@ soloud = { git = "https://github.com/MoAlyousef/soloud-rs" }
 toml = "0.8.8"
 notify-rust = "4.10.0"
 anstyle = "1.0.4"
+log = "0.4.20"
+env_logger = "0.11.1"

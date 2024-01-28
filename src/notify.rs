@@ -1,3 +1,4 @@
+use log::{debug, error};
 use notify_rust::{error, Hint, Notification, NotificationHandle};
 use soloud::{audio::Wav, AudioExt, LoadExt, Soloud};
 use std::{env, fmt, path::Path, thread, time};
@@ -69,10 +70,8 @@ pub fn send_sound_notification(sound: &[u8]) {
             let mut wav = Wav::default();
 
             match wav.load_mem(sound) {
-                Ok(r) => println!("[DEBUG] Sound file has been loaded: {:#?}", r),
-                Err(error) => {
-                    println!("[WARN] Couldn't load sound file: {}", error.to_string())
-                }
+                Ok(r) => debug!("sound file has been loaded: {:#?}", r),
+                Err(error) => error!("couldn't load sound file: {}", error.to_string()),
             };
 
             sl.play(&wav);
@@ -80,7 +79,7 @@ pub fn send_sound_notification(sound: &[u8]) {
                 thread::sleep(time::Duration::from_millis(500));
             }
         }
-        Err(error) => println!(
+        Err(error) => error!(
             "[ERROR] soloud instance couldn't be correctly initialized: {}",
             error.to_string()
         ),

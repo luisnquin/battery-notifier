@@ -1,5 +1,6 @@
 use chrono::Utc;
 use clap::Parser;
+use log::{debug, error, info, warn, LevelFilter};
 use notify_rust::NotificationHandle;
 use std::{
     thread,
@@ -18,13 +19,18 @@ mod battery;
 use battery::*;
 
 fn main() {
+    env_logger::builder()
+        .filter_level(LevelFilter::Debug)
+        .init();
+
     let args = cli::Args::parse();
+    debug!("{:#?}", args);
 
     let cp = get_config_file(args.config_file);
-    println!("Config file path: {}", cp);
+    debug!("config file path is {}", cp);
 
     let config = Config::parse_or_default(cp);
-    println!("{:#?}", config);
+    debug!("{:#?}", config);
 
     // Calculates the notification level based on the provided battery capacity.
     let get_notification_level = |capacity: u8| -> BatteryNotificationLevel {
@@ -51,12 +57,12 @@ fn main() {
         let capacity = psc.get_capacity();
         let status = psc.get_status();
 
-        println!("[DEBUG] Current capacity: {} Status: {}", capacity, status);
+        info!("current capacity: {} Status: {}", capacity, status);
 
         if status == "Charging" && last_notification_level != BatteryNotificationLevel::Charging {
-            println!("[DEBUG] Now the battery is charging...");
-            println!(
-                "[DEBUG] The last notified capacity will be restarted to 0 (it was {})",
+            info!("now the battery is charging...");
+            info!(
+                "the last notified capacity will be restarted to 0 (it was {})",
                 last_notification_level
             );
 
@@ -66,7 +72,7 @@ fn main() {
                 last_notification_handler.take().map(|h| h.close());
                 send_sound_notification(CHARGING_BATTERY_SOUND);
             } else {
-                println!("[WARNING] the app started with the computer plugged in, nothing to do");
+                warn!("the app started with the computer plugged in, nothing to do");
             }
 
             last_notification_level = BatteryNotificationLevel::Charging
@@ -81,8 +87,8 @@ fn main() {
                     _ => panic!("unexpected battery notification level"),
                 };
 
-                println!(
-                    "[DEBUG] Last notification level: {}, Current notification level: {}",
+                debug!(
+                    "last notification level: {}, current notification level: {}",
                     last_notification_level, current_notification_level
                 );
 
@@ -99,14 +105,17 @@ fn main() {
                     if result.is_ok() {
                         last_notification_handler = Some(result.unwrap());
                     } else {
-                        println!("[ERROR] Battery notification: {:#?}", result.unwrap())
+                        error!(
+                            "error sending desktop notification: {}",
+                            result.unwrap_err()
+                        )
                     }
 
                     send_sound_notification(urgency.get_sound());
                 };
 
-                println!(
-                    "[DEBUG] Last notification level: {}, Current notification level: {}",
+                info!(
+                    "last notification level: {}, current notification level: {}",
                     last_notification_level, current_notification_level
                 );
             }
