@@ -107,3 +107,5 @@ pub fn get_icon_path_or_default(icon_path: Option<String>) -> String {
         BATTERY_DANGER_PATH.to_owned()
     }
 }
+
+// Could a new romance ever _find you?
