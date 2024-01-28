@@ -35,6 +35,11 @@ in {
           default = 700;
         };
 
+        icon_path = mkOption {
+          type = types.str;
+          default = "";
+        };
+
         reminder = mkOption {
           type = boundModule;
           default = {
