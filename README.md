@@ -15,6 +15,7 @@ Configuration files should be located in the `$XDG_CONFIG_FILE`. If undefined, t
 # battery-notifier/config.toml
 
 interval_ms = 700 # 7s
+icon_path = "/absolute/path/to/alternative/icon"
 
 [reminder]
 threshold = 30
@@ -68,6 +69,7 @@ If you use [Home Manager](https://github.com/nix-community/home-manager) to mana
           programs.battery-notifier = {
             enable = true;
             settings = {
+              icon_path = ../assets/icons/battery-notifier.png; # Nix path
               interval_ms = 700;
               reminder = {threshold = 30;};
               threat = {threshold = 5;};
