@@ -76,7 +76,7 @@ impl Config {
         let content = fs::read_to_string(config_path)?;
         let config: Config = toml::from_str(&content)?;
 
-        Ok(Config::default().merge(config))
+        Ok(config.merge(Config::default()))
     }
 
     pub fn parse_or_default(config_path: String) -> Self {
