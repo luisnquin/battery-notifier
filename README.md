@@ -17,7 +17,7 @@ This project follows the [Power supply class specification](https://docs.kernel.
 
 ## Why?
 
-Many window managers lack dedicated battery status programs. This project aims to fill that gap by providing a fully customizable solution that operates as a daemon, offering both battery status reporting and built-in performance features.
+Window managers lack dedicated programs to notify the battery status of your computer. This project aims to fill that gap by providing a fully customizable solution that operates as a daemon, offering both battery status reporting and built-in performance features.
 
 ## Configuration
 
