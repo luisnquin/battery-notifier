@@ -1,6 +1,6 @@
 use log::{error, info, warn};
 use serde::Deserialize;
-use std::{env, fs, path::Path};
+use std::{env, fs, path::Path, process};
 
 #[derive(Debug, Clone, Deserialize)]
 pub struct Bound {
@@ -91,6 +91,18 @@ impl Config {
                 info!("default config will be used");
                 Config::default() // Provide a default value or handle it as needed
             }
+        }
+    }
+
+    pub fn validate(&self) {
+        if self.reminder.threshold <= self.warn.threshold {
+            error!("reminder threshold must be higher than warn threshold");
+            process::exit(1);
+        }
+
+        if self.warn.threshold <= self.threat.threshold {
+            error!("warn threshold must be higher than threat threshold");
+            process::exit(1);
         }
     }
 

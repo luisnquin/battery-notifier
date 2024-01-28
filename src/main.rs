@@ -31,6 +31,7 @@ fn main() {
 
     let config = Config::parse_or_default(cp);
     debug!("{:#?}", config);
+    config.validate();
 
     // Calculates the notification level based on the provided battery capacity.
     let get_notification_level = |capacity: u8| -> BatteryNotificationLevel {
