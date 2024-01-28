@@ -44,5 +44,5 @@ fn get_styles() -> Styles {
                 .underline()
                 .fg_color(Some(Color::Ansi(AnsiColor::Green))),
         )
-        .placeholder(Style::new().fg_color(Some(Color::Ansi(AnsiColor::Black))))
+        .placeholder(Style::new().fg_color(Some(Color::Ansi(AnsiColor::White))))
 }
