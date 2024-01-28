@@ -5,6 +5,16 @@ Is a customizable daemon designed to report the battery status of your laptop wh
 
 ![Demo](./.github/assets/demo.gif)
 
+This project follows the [Power supply class specification](https://docs.kernel.org/power/power_supply_class.html#attributes-properties-detailed) defined in the [Linux Kernel Documentation](https://docs.kernel.org/).
+
+## Features
+
+ - **Lightweight**: Minimal impact on system resources (3.75 MiB of consumption on my computer).
+ - **Configurable notification levels**: Customize three different notification levels – *reminder*, *warning*, and *threat*.
+ - **Adjustable check interval:** Set the check interval to your liking, ensuring timely updates on your battery status.
+ - **Custom notification icon**: Choose your preferred icon.
+ - **Good configuration defaults**: Comes with well-considered default settings.
+
 ## Why?
 
 Many window managers lack dedicated battery status programs. This project aims to fill that gap by providing a fully customizable solution that operates as a daemon, offering both battery status reporting and built-in performance features.
