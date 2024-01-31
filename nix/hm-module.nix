@@ -98,10 +98,6 @@ in {
         }
       ];
 
-      xdg.configFile = mkIf (cfg.settings != null) {
-        "battery-notifier/config.toml".source = tomlFormat.generate "battery-notifier-config" cfg.settings;
-      };
-
       systemd.user.services = {
         battery-notifier = {
           Unit = {
@@ -110,7 +106,9 @@ in {
 
           Service = {
             Type = "simple";
-            ExecStart = "${flake-pkgs.battery-notifier}/bin/battery-notifier";
+            ExecStart = let
+              pname = "battery-notifier";
+            in "${flake-pkgs.battery-notifier}/bin/${pname} --config-file=${tomlFormat.generate "${pname}-user-config" cfg.settings}";
             Restart = "on-failure";
           };
 
