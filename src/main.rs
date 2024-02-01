@@ -94,6 +94,7 @@ fn main() {
                 );
 
                 if last_notification_level != current_notification_level {
+                    last_notification_level = current_notification_level;
                     last_notification_handler.take().map(|h| h.close());
 
                     let result = send_desktop_notification(
