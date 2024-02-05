@@ -1,7 +1,7 @@
 [package]
 name = "battery-notifier"
 description = "A customizable battery notifier for Linux kernels focused in BAT0 and BAT1"
-version = "0.1.0"
+version = "1.0.0"
 edition = "2021"
 repository = "https://github.com/luisnquin/battery-notifier"
 readme = "README.md"
