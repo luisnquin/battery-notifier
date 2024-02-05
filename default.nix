@@ -1,7 +1,7 @@
 {pkgs ? import <nixpkgs> {}, ...}:
 pkgs.rustPlatform.buildRustPackage rec {
   pname = "battery-notifier";
-  version = "unstable";
+  version = (builtins.fromTOML (builtins.readFile ./Cargo.toml)).package.version;
 
   src = builtins.path {
     name = "${pname}-source";
