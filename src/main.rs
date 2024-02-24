@@ -60,6 +60,7 @@ fn main() {
 
         info!("current capacity: {} Status: {}", capacity, status);
 
+        // This double check is necessary to don't perform the same action repeated times
         if status == "Charging" && last_notification_level != BatteryNotificationLevel::Charging {
             info!("now the battery is charging...");
             info!(
