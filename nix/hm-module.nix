@@ -100,21 +100,16 @@ in {
 
       systemd.user.services = {
         battery-notifier = {
-          Unit = {
-            Description = "A very useful battery notifier for window managers";
-          };
+            description = "A very useful battery notifier for window managers";
 
-          Service = {
+          serviceConfig = {
             Type = "simple";
             ExecStart = let
               pname = "battery-notifier";
             in "${flake-pkgs.battery-notifier}/bin/${pname} --config-file=${tomlFormat.generate "${pname}-user-config" cfg.settings}";
             Restart = "on-failure";
           };
-
-          Install = {
-            WantedBy = ["default.target"];
-          };
+            wantedBy = ["default.target"];
         };
       };
     };
