@@ -9,11 +9,11 @@ This project follows the [Power supply class specification](https://docs.kernel.
 
 ## Features
 
- - **Lightweight**: Minimal impact on system resources (3.75 MiB of consumption on my computer).
- - **Configurable notification levels**: Customize three different notification levels – *reminder*, *warning*, and *threat*.
- - **Adjustable check interval:** Set the check interval to your liking, ensuring timely updates on your battery status.
- - **Custom notification icon**: Choose your preferred icon.
- - **Good configuration defaults**: Comes with well-considered default settings.
+- **Lightweight**: Minimal impact on system resources (3.75 MiB of consumption on my computer).
+- **Configurable notification levels**: Customize three different notification levels – *reminder*, *warning*, and *threat*.
+- **Adjustable check interval:** Set the check interval to your liking, ensuring timely updates on your battery status.
+- **Custom notification icon**: Choose your preferred icon.
+- **Good configuration defaults**: Comes with well-considered default settings.
 
 ## Why?
 
@@ -49,7 +49,9 @@ Adjust the values to suit your preferences.
 
 ## Installation
 
-### Ubuntu
+<details open>
+<summary><b>Ubuntu</b></summary>
+<br>
 
 ```sh
 # Install necessary build dependencies.
@@ -58,7 +60,10 @@ $ apt-get install cmake git -y
 $ cargo install --path .
 ```
 
-### Home Manager
+</details>
+
+<details>
+<summary><b>Home Manager</b/></summary>
 
 If you use [Home Manager](https://github.com/nix-community/home-manager) to manage your user environment, integrating the battery notifier into your configuration is straightforward.
 
@@ -67,11 +72,17 @@ If you use [Home Manager](https://github.com/nix-community/home-manager) to mana
 {
   inputs = {
     nixpkgs.url = "nixpkgs/nixos-unstable";
-    home-manager.url = "github:nix-community/home-manager";
-    battery-notifier.url = "github:luisnquin/battery-notifier";
+    home-manager = {
+      url = "github:nix-community/home-manager";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+    battery-notifier = {
+      url = "github:luisnquin/battery-notifier";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
-  outputs = inputs @ {
+  outputs = {
     self,
     home-manager,
     battery-notifier,
@@ -106,6 +117,57 @@ If you use [Home Manager](https://github.com/nix-community/home-manager) to mana
 }
 ```
 
+</details>
+
+<details>
+<summary><b>NixOS</b/></summary>
+
+```nix
+# flake.nix
+{
+  inputs = {
+    nixpkgs.url = "nixpkgs/nixos-unstable";
+    battery-notifier = {
+      url = "github:luisnquin/battery-notifier";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+  };
+
+  outputs = {
+    self,
+    battery-notifier,
+    nixpkgs,
+    ...
+  }: let
+    system = "x86_64-linux";
+    hostname = "nixos";
+
+    pkgs = import nixpkgs {inherit system;};
+  in {
+    nixosConfigurations."${hostname}" = nixpkgs.lib.nixosSystem {
+      inherit pkgs;
+
+      modules = [
+        battery-notifier.nixosModules.default
+        {
+          services.battery-notifier = {
+            enable = true;
+            settings = {
+              icon_path = ../assets/icons/battery-notifier.png; # Nix path
+              interval_ms = 700;
+              reminder = {threshold = 30;};
+              threat = {threshold = 5;};
+              warn = {threshold = 15;};
+            };
+          };
+        }
+      ];
+    };
+  };
+}
+```
+
+</details>
 
 ## Development
 
@@ -122,7 +184,6 @@ $ cargo run -- --debug-file=./debug.yaml
 ```
 
 This command serves as a **manual test suite**, so after any changes, ensure to run the program using the original debug file.
-
 
 ## Contributing
 
