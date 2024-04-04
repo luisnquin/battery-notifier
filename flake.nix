@@ -4,7 +4,7 @@
     systems.url = "github:nix-systems/default-linux";
   };
 
-  outputs = inputs @ {
+  outputs = {
     self,
     nixpkgs,
     systems,
@@ -24,6 +24,7 @@
       battery-notifier = pkgs.callPackage ./default.nix {};
     });
 
+    nixosModules.default = import ./nix/nixos-module.nix self;
     homeManagerModule.default = import ./nix/hm-module.nix self;
   };
 }
