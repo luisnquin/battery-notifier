@@ -1,0 +1,10 @@
+[Unit]
+Description=A very useful battery notifier for window managers
+
+[Service]
+ExecStart=battery-notifier
+Restart=on-failure
+Type=simple
+
+[Install]
+WantedBy=default.target
