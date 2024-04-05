@@ -26,5 +26,19 @@
 
     nixosModules.default = import ./nix/nixos-module.nix self;
     homeManagerModule.default = import ./nix/hm-module.nix self;
+
+    devShells.default = eachSystem (system: let
+      pkgs = pkgsFor.${system};
+    in
+      pkgs.mkShell (let
+        rust-latest = pkgs.rust-bin.stable.latest.default.override {
+          extensions = [
+            "rust-src"
+            "rust-analyzer"
+          ];
+        };
+      in {
+        buildInputs = with pkgs; [rust-analyzer cargo rust-latest];
+      }));
   };
 }
