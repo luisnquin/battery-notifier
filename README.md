@@ -54,10 +54,16 @@ Adjust the values to suit your preferences.
 <br>
 
 ```sh
+$ git clone https://github.com/luisnquin/battery-notifier.git
+$ cd battery-notifier
 # Install necessary build dependencies.
-$ apt-get install cmake git -y
+$ apt update && apt install cmake g++ cargo -y
 # Install the program binary. Default location is $HOME/.cargo/bin.
 $ cargo install --path .
+# Install systemd unit in your computer
+$ mkdir -p $HOME/.config/systemd/user/
+$ sed 's#ExecStart=battery-notifier#ExecStart=$HOME/.cargo/bin/battery-notifier#' systemd/battery-notifier.service > "$HOME/.config/systemd/user/battery-notifier.service"
+$ systemctl --user enable battery-notifier.service
 ```
 
 </details>
