@@ -27,6 +27,11 @@
     nixosModules.default = import ./nix/nixos-module.nix self;
     homeManagerModule.default = import ./nix/hm-module.nix self;
 
+    formatter = eachSystem (system: let
+      pkgs = pkgsFor.${system};
+    in
+      pkgs.alejandra);
+
     devShells.default = eachSystem (system: let
       pkgs = pkgsFor.${system};
     in
