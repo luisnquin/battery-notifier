@@ -191,6 +191,11 @@ $ cargo run -- --debug-file=./debug.yaml
 
 This command serves as a **manual test suite**, so after any changes, ensure to run the program using the original debug file.
 
+## Troubleshooting
+
+- **I'm not receiving audio alerts**: Check that the [soloud-rs](https://github.com/MoAlyousef/soloud-rs?tab=readme-ov-file#backends) package is being compiled with the
+audio backend that you're using. **By default** soloud-rs is compiled to only use [miniaudio](https://miniaud.io/).
+
 ## Contributing
 
 Feel free to create a new issue or pull request if you see something to improve.
