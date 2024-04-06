@@ -9,7 +9,15 @@ with lib; let
   tomlFormat = pkgs.formats.toml {};
   flake-pkgs = self.packages.${system};
 in {
-  options.programs.battery-notifier = let
+  imports = [
+    (lib.mkRenamedOptionModuleWith {
+      sinceRelease = 2405;
+      from = ["programs" "battery-notifier"];
+      to = ["services" "battery-notifier"];
+    })
+  ];
+
+  options.services.battery-notifier = let
     boundModule = types.submodule {
       options = {
         threshold = mkOption {
@@ -72,7 +80,7 @@ in {
   };
 
   config = let
-    cfg = config.programs.battery-notifier;
+    cfg = config.services.battery-notifier;
   in
     mkIf cfg.enable {
       assertions = mkIf (cfg.settings != null) [

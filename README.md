@@ -106,7 +106,7 @@ If you use [Home Manager](https://github.com/nix-community/home-manager) to mana
       modules = [
         battery-notifier.homeManagerModule.default
         {
-          programs.battery-notifier = {
+          services.battery-notifier = {
             enable = true;
             settings = {
               icon_path = ../assets/icons/battery-notifier.png; # Nix path
