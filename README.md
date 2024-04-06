@@ -175,6 +175,64 @@ If you use [Home Manager](https://github.com/nix-community/home-manager) to mana
 
 </details>
 
+## Nix options reference
+
+### `services.battery-notifier` module reference
+
+Applicable for the supplied home-manager and nixos configuration options.
+
+#### `services.battery-notifier.enable`
+
+**Type:** [Boolean](https://nixos.org/manual/nix/stable/language/values#type-boolean)
+
+To enable the battery-notifier systemd service. It already has its own defaults so this can be enough for you.
+
+#### `services.battery-notifier.settings`
+
+**Type:** [Attribute set](https://nixos.org/manual/nix/stable/language/values#attribute-set)
+
+User preferences of the program.
+
+#### `services.battery-notifier.settings.interval_ms`
+
+**Type:** [Number](https://nixos.org/manual/nix/stable/language/values#type-number)
+
+The number of milliseconds the program will wait to check again your **BAT(0|1)** file.
+
+#### `services.battery-notifier.settings.icon_path`
+
+**Type:** [Nix path](https://nixos.org/manual/nix/stable/language/values#type-path) or [String](https://nixos.org/manual/nix/stable/language/values#type-string)
+
+Absolute path to the icon to use in the notification message.
+
+#### `services.battery-notifier.settings.<bound>`
+
+**Type:** [Attribute set](https://nixos.org/manual/nix/stable/language/values#attribute-set)
+
+Settings for the different alert levels whose respectively are:
+
+- **reminder** [1st alert]
+- **warn** [2nd alert]
+- **threat** [final alert]
+
+Ensure consistent threshold values across all levels, or the module assertion **will fail**.
+
+#### `services.battery-notifier.settings.<bound>.threshold`
+
+**Type:** [Number](https://nixos.org/manual/nix/stable/language/values#type-number)
+
+Number between **0 and 100** (careful) that will determine the capacity of the computer and whether it has just entered or exited.
+
+#### `services.battery-notifier.settings.<bound>.title`
+
+**Type:** [String](https://nixos.org/manual/nix/stable/language/values#type-string)
+
+Title of the notification message displayed when the battery enters a specific **bound**.
+
+#### `services.battery-notifier.settings.<bound>.content`
+
+Content of the notification message displayed when the battery enters a specific **bound**.
+
 ## CLI reference
 
 ```text
