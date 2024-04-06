@@ -175,6 +175,20 @@ If you use [Home Manager](https://github.com/nix-community/home-manager) to mana
 
 </details>
 
+## CLI reference
+
+```text
+A customizable battery notifier for Linux kernels focused in BAT0 and BAT1
+
+Usage: battery-notifier [OPTIONS]
+
+Options:
+  -d, --debug-file <DEBUG_FILE>    To simulate battery states (yaml)
+  -c, --config-file <CONFIG_FILE>  The config file path (toml)
+  -h, --help                       Print help
+  -V, --version                    Print version
+```
+
 ## Development
 
 To develop and contribute to the project, use standard Cargo commands such as **build**, **run**, and **add**.
