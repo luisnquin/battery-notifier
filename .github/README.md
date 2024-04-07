@@ -175,7 +175,7 @@ If you use [Home Manager](https://github.com/nix-community/home-manager) to mana
 
 </details>
 
-## Nix options reference
+## Reference
 
 ### `services.battery-notifier` module reference
 
@@ -233,7 +233,7 @@ Title of the notification message displayed when the battery enters a specific *
 
 Content of the notification message displayed when the battery enters a specific **bound**.
 
-## CLI reference
+### CLI reference
 
 ```text
 A customizable battery notifier for Linux kernels focused in BAT0 and BAT1
