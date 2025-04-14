@@ -12,10 +12,6 @@ pkgs.rustPlatform.buildRustPackage rec {
 
   cargoLock = {
     lockFile = ./Cargo.lock;
-
-    outputHashes = {
-      "soloud-1.0.5" = "sha256-2Cd5aWfntRawxRSdy+4tJJdTkTeii1ilshQadG6Pybw=";
-    };
   };
 
   preConfigure = ''
