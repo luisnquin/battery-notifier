@@ -26,7 +26,7 @@ Configuration files should be located in the `$XDG_CONFIG_FILE`. If undefined, t
 ```toml
 # battery-notifier/config.toml
 
-interval_ms = 700 # 7s
+interval_ms = 700 # 0.7s
 icon_path = "/absolute/path/to/alternative/icon"
 
 [reminder]
