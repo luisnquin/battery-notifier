@@ -1,10 +1,9 @@
-use chrono::Utc;
 use clap::Parser;
 use log::{debug, error, info, warn, LevelFilter};
 use notify_rust::NotificationHandle;
 use std::{
     thread,
-    time::{self},
+    time::{self, Instant},
 };
 
 mod cli;
@@ -47,7 +46,7 @@ fn main() {
         }
     };
 
-    let start_time = Utc::now().time();
+    let start_time = Instant::now();
     let sleep_time = time::Duration::from_millis(config.interval_ms);
 
     let mut last_notification_level = BatteryNotificationLevel::NoConflict;
@@ -68,9 +67,7 @@ fn main() {
                 last_notification_level
             );
 
-            let current_time = Utc::now().time();
-
-            if (current_time - start_time).num_seconds() > 5 {
+            if start_time.elapsed().as_secs() > 5 {
                 last_notification_handler.take().map(|h| h.close());
                 send_sound_notification(CHARGING_BATTERY_SOUND);
             } else {
