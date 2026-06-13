@@ -18,7 +18,7 @@ pub enum Urgency {
 }
 
 impl Urgency {
-    pub fn get_sound(&self) -> &[u8] {
+    pub fn get_sound(&self) -> &'static [u8] {
         match self {
             Urgency::CRITICAL => THREAT_BATTERY_SOUND,
             Urgency::NORMAL => WARN_BATTERY_SOUND,
@@ -62,28 +62,35 @@ pub fn send_desktop_notification(
     result.map(|r| return r)
 }
 
-pub fn send_sound_notification(sound: &[u8]) {
-    let rsl = Soloud::default();
+pub fn send_sound_notification(sound: &'static [u8]) {
+    // Playback runs on its own thread so opening the audio device and waiting for
+    // the sound to finish never blocks the battery polling loop.
+    thread::spawn(move || {
+        let rsl = Soloud::default();
 
-    match rsl {
-        Ok(sl) => {
-            let mut wav = Wav::default();
+        match rsl {
+            Ok(sl) => {
+                let mut wav = Wav::default();
 
-            match wav.load_mem(sound) {
-                Ok(r) => debug!("sound file has been loaded: {:#?}", r),
-                Err(error) => error!("couldn't load sound file: {}", error.to_string()),
-            };
+                match wav.load_mem(sound) {
+                    Ok(r) => debug!("sound file has been loaded: {:#?}", r),
+                    Err(error) => {
+                        error!("couldn't load sound file: {}", error.to_string());
+                        return;
+                    }
+                };
 
-            sl.play(&wav);
-            while sl.voice_count() > 0 {
-                thread::sleep(time::Duration::from_millis(500));
+                sl.play(&wav);
+                while sl.voice_count() > 0 {
+                    thread::sleep(time::Duration::from_millis(100));
+                }
             }
+            Err(error) => error!(
+                "[ERROR] soloud instance couldn't be correctly initialized: {}",
+                error.to_string()
+            ),
         }
-        Err(error) => error!(
-            "[ERROR] soloud instance couldn't be correctly initialized: {}",
-            error.to_string()
-        ),
-    }
+    });
 }
 
 pub fn get_icon_path_or_default(icon_path: Option<String>) -> String {
