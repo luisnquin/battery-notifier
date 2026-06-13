@@ -59,9 +59,16 @@ fn main() {
 
         info!("current capacity: {} Status: {}", capacity, status);
 
+        // The kernel reports several statuses for a plugged-in adapter ("Charging"
+        // while filling, "Full" once topped off, "Not charging" when held below a
+        // charge limit), and may sit on "Unknown" for a few seconds while the EC
+        // settles after plug-in. Anything that is not "Discharging" or "Unknown"
+        // means the adapter is connected.
+        let plugged_in = matches!(status.as_str(), "Charging" | "Full" | "Not charging");
+
         // This double check is necessary to don't perform the same action repeated times
-        if status == "Charging" && last_notification_level != BatteryNotificationLevel::Charging {
-            info!("now the battery is charging...");
+        if plugged_in && last_notification_level != BatteryNotificationLevel::Charging {
+            info!("now the battery is plugged in (status: {})...", status);
             info!(
                 "the last notified capacity will be restarted to 0 (it was {})",
                 last_notification_level
@@ -75,7 +82,7 @@ fn main() {
             }
 
             last_notification_level = BatteryNotificationLevel::Charging
-        } else if status == "Discharging" || status == "Not charging" {
+        } else if status == "Discharging" {
             let current_notification_level = get_notification_level(capacity);
 
             if current_notification_level != BatteryNotificationLevel::NoConflict {
