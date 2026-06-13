@@ -1,7 +1,10 @@
 use chrono::Utc;
 use linuxver::version as get_linux_version;
+use log::{info, warn};
 use serde::Deserialize;
 use std::{fmt, fs, ops::Index};
+
+const POWER_SUPPLY_BASE: &str = "/sys/class/power_supply";
 
 pub struct PowerSupplyClass {
     path: String,
@@ -15,26 +18,35 @@ impl PowerSupplyClass {
             panic!("This program requires Linux 2.6 or higher");
         }
 
-        let class = match os_info::get().os_type() {
-            os_info::Type::Ubuntu => "BAT0",
-            _ => {
-                if kernel_version.major < 3
-                    || (kernel_version.major == 3 && kernel_version.minor < 19)
-                {
-                    "BAT0"
-                } else {
-                    "BAT1"
-                }
-            }
-        };
+        let path = Self::detect_battery_path().unwrap_or_else(|| {
+            let fallback = format!("{}/BAT0", POWER_SUPPLY_BASE);
+            warn!("no battery node found under {POWER_SUPPLY_BASE}, falling back to {fallback}");
+            fallback
+        });
+        info!("using battery node at {path}");
 
         PowerSupplyClass {
-            path: format!("/sys/class/power_supply/{}", class),
+            path,
             debug: debug_file_path.map(|p| {
                 let settings = DebugSettings::parse(p);
                 Debug::new(settings)
             }),
         }
+    }
+
+    // Scans the power supply class for the first node reporting type "Battery"
+    // and exposing a capacity file, instead of guessing BAT0/BAT1 from the OS.
+    fn detect_battery_path() -> Option<String> {
+        fs::read_dir(POWER_SUPPLY_BASE).ok()?.flatten().find_map(|entry| {
+            let path = entry.path();
+            let kind = fs::read_to_string(path.join("type")).ok()?;
+
+            if kind.trim() == "Battery" && path.join("capacity").exists() {
+                Some(path.to_string_lossy().into_owned())
+            } else {
+                None
+            }
+        })
     }
 
     pub fn get_capacity(&mut self) -> u8 {
