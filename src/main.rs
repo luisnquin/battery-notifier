@@ -54,8 +54,23 @@ fn main() {
     let mut psc = PowerSupplyClass::new(args.debug_file);
 
     loop {
-        let capacity = psc.get_capacity();
-        let status = psc.get_status();
+        let capacity = match psc.get_capacity() {
+            Ok(capacity) => capacity,
+            Err(error) => {
+                warn!("could not read battery capacity, skipping: {}", error);
+                thread::sleep(sleep_time);
+                continue;
+            }
+        };
+
+        let status = match psc.get_status() {
+            Ok(status) => status,
+            Err(error) => {
+                warn!("could not read battery status, skipping: {}", error);
+                thread::sleep(sleep_time);
+                continue;
+            }
+        };
 
         info!("current capacity: {} Status: {}", capacity, status);
 

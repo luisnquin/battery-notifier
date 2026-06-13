@@ -2,7 +2,7 @@ use chrono::Utc;
 use linuxver::version as get_linux_version;
 use log::{info, warn};
 use serde::Deserialize;
-use std::{fmt, fs, ops::Index};
+use std::{fmt, fs, io, ops::Index};
 
 const POWER_SUPPLY_BASE: &str = "/sys/class/power_supply";
 
@@ -49,7 +49,7 @@ impl PowerSupplyClass {
         })
     }
 
-    pub fn get_capacity(&mut self) -> u8 {
+    pub fn get_capacity(&mut self) -> io::Result<u8> {
         if self.debug.is_some() {
             let debug = self.debug.as_mut().unwrap();
             let now = Utc::now().time();
@@ -59,19 +59,20 @@ impl PowerSupplyClass {
                 debug.next_state();
             };
 
-            return debug.get_current_state().capacity;
+            return Ok(debug.get_current_state().capacity);
         }
 
-        let raw_capacity: String = fs::read_to_string(self.get_capacity_path())
-            .expect("Read battery capacity file")
-            .replace("\n", "");
+        let raw_capacity = fs::read_to_string(self.get_capacity_path())?.replace("\n", "");
 
-        raw_capacity
-            .parse::<u8>()
-            .expect("BAT1 capacity file doesn't contains a number")
+        raw_capacity.parse::<u8>().map_err(|e| {
+            io::Error::new(
+                io::ErrorKind::InvalidData,
+                format!("battery capacity file does not contain a number ({raw_capacity:?}): {e}"),
+            )
+        })
     }
 
-    pub fn get_status(&mut self) -> String {
+    pub fn get_status(&mut self) -> io::Result<String> {
         if self.debug.is_some() {
             let debug = self.debug.as_mut().unwrap();
             let now = Utc::now().time();
@@ -81,12 +82,10 @@ impl PowerSupplyClass {
                 debug.next_state();
             };
 
-            return debug.get_current_state().status;
+            return Ok(debug.get_current_state().status);
         }
 
-        fs::read_to_string(self.get_status_path())
-            .expect("Read battery status file")
-            .replace("\n", "")
+        Ok(fs::read_to_string(self.get_status_path())?.replace("\n", ""))
     }
 
     fn get_capacity_path(&self) -> String {
